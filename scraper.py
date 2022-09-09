@@ -154,6 +154,9 @@ def download_vinted_data(userids, s):
             verification_facebook = data['verification']['facebook']['valid']
             verification_google = data['verification']['google']['valid']
             verification_phone = data['verification']['phone']['valid']
+            
+            vinted_user_path = 'downloads/' + str(username) + ' (' + str(USER_ID) +') /'
+            
             if data['photo']:
                 photo = data['photo']['url']
                 photo_id = data['photo']['id']
@@ -206,13 +209,12 @@ def download_vinted_data(userids, s):
                 products = jsonresponse['items']
                 if products:
                     # Download all products
-                    path= "downloads/" + str(USER_ID) +'/'
                     try:
-                        os.mkdir(path)
+                        os.mkdir(vinted_user_path)
                     except OSError:
-                        print ("Creation of the directory %s failed or the folder already exists " % path)
+                        print ("Creation of the directory %s failed or the folder already exists " % vinted_user_path)
                     else:
-                        print ("Successfully created the directory %s " % path)
+                        print ("Successfully created the directory %s " % vinted_user_path)
                     for product in jsonresponse['items']:
                             img = product['photos']
                             ID = product['id']
@@ -227,7 +229,6 @@ def download_vinted_data(userids, s):
                             Price = product['price']
                             Images = product['photos']
                             title = product['title']
-                            path= "downloads/" + str(User_id) +'/'
 
                             #print(img)
                             if Images:
@@ -235,7 +236,7 @@ def download_vinted_data(userids, s):
                                     full_size_url = images['full_size_url']
                                     img_name = images['high_resolution']['id']
                                     #print(img_name)
-                                    filepath = 'downloads/'+ str(USER_ID) +'/' + img_name +'.jpeg'
+                                    filepath = vinted_user_path + img_name +'.jpeg'
                                     if not os.path.isfile(filepath):
                                         #print(full_size_url)
                                         req = requests.get(full_size_url)
