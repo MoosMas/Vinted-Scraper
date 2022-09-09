@@ -229,6 +229,15 @@ def download_vinted_data(userids, s):
                             Price = product['price']
                             Images = product['photos']
                             title = product['title']
+                            
+                            vinted_product_path = vinted_user_path + str(title) + " (" + str(ID) + ')/'
+                            try:
+                                os.mkdir(vinted_product_path)
+                            except OSError:
+                                print ("Creation of the directory %s failed or the folder already exists " % vinted_product_path)
+                            else:
+                                print ("Successfully created the directory %s " % vinted_product_path)
+                            
 
                             #print(img)
                             if Images:
@@ -236,7 +245,7 @@ def download_vinted_data(userids, s):
                                     full_size_url = images['full_size_url']
                                     img_name = images['high_resolution']['id']
                                     #print(img_name)
-                                    filepath = vinted_user_path + img_name +'.jpeg'
+                                    filepath = vinted_product_path + img_name +'.jpeg'
                                     if not os.path.isfile(filepath):
                                         #print(full_size_url)
                                         req = requests.get(full_size_url)
