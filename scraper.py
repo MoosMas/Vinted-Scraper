@@ -346,11 +346,13 @@ def download_depop_data(userids):
                 print("Got all products. Start Downloading...")
                 break
         print(len(slugs))
-        path = "downloads/" + str(userid) + '/'
+        
+        depop_user_path = "downloads/" + str(userid) + '/'
+        
         try:
-            os.mkdir(path)
+            os.mkdir(depop_user_path)
         except OSError:
-            print("Creation of the directory %s failed or the folder already exists " % path)
+            print("Creation of the directory %s failed or the folder already exists " % depop_user_path)
         for slug in slugs:
             url = f"https://webapi.depop.com/api/v2/product/{slug}"
             #print(url)
