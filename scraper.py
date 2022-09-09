@@ -377,6 +377,7 @@ def download_depop_data(userids):
             description = product_data['description']
             Sold = product_data['status']
             title = slug.replace("-"," ")
+            product_title = title.split(userid + " ", 1)[1]
 
             Colors = []
             # Get colors if available
@@ -399,14 +400,22 @@ def download_depop_data(userids):
             except KeyError:
                 pass
 
-
-
             for images in product_data['pictures']:
+                
+                depop_product_path = depop_user_path + str(product_title) + ' (' + str(product_id) + ')/'
+
+                try:
+                    os.mkdir(depop_product_path)
+                except OSError:
+                    print ("Creation of the directory %s failed or the folder already exists " % depop_product_path)
+                else:
+                    print ("Successfully created the directory %s " % depop_product_path)
+                
                 for i in images:
                     full_size_url = i['url']
                     img_name = i['id']
                 print(img_name)
-                filepath = 'downloads/' + str(userid) + '/' + str(img_name) + '.jpg'
+                filepath = depop_product_path + str(img_name) + '.jpg'
                 if not os.path.isfile(filepath):
                     print(full_size_url)
                     req = requests.get(full_size_url)
