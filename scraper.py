@@ -154,6 +154,9 @@ def download_vinted_data(userids, s):
             verification_facebook = data['verification']['facebook']['valid']
             verification_google = data['verification']['google']['valid']
             verification_phone = data['verification']['phone']['valid']
+            
+            vinted_user_path = 'downloads/' + str(username) + ' (' + str(USER_ID) +') /'
+            
             if data['photo']:
                 photo = data['photo']['url']
                 photo_id = data['photo']['id']
@@ -206,13 +209,12 @@ def download_vinted_data(userids, s):
                 products = jsonresponse['items']
                 if products:
                     # Download all products
-                    path= "downloads/" + str(USER_ID) +'/'
                     try:
-                        os.mkdir(path)
+                        os.mkdir(vinted_user_path)
                     except OSError:
-                        print ("Creation of the directory %s failed or the folder already exists " % path)
+                        print ("Creation of the directory %s failed or the folder already exists " % vinted_user_path)
                     else:
-                        print ("Successfully created the directory %s " % path)
+                        print ("Successfully created the directory %s " % vinted_user_path)
                     for product in jsonresponse['items']:
                             img = product['photos']
                             ID = product['id']
@@ -227,7 +229,15 @@ def download_vinted_data(userids, s):
                             Price = product['price']
                             Images = product['photos']
                             title = product['title']
-                            path= "downloads/" + str(User_id) +'/'
+                            
+                            vinted_product_path = vinted_user_path + str(title) + " (" + str(ID) + ')/'
+                            try:
+                                os.mkdir(vinted_product_path)
+                            except OSError:
+                                print ("Creation of the directory %s failed or the folder already exists " % vinted_product_path)
+                            else:
+                                print ("Successfully created the directory %s " % vinted_product_path)
+                            
 
                             #print(img)
                             if Images:
@@ -235,7 +245,7 @@ def download_vinted_data(userids, s):
                                     full_size_url = images['full_size_url']
                                     img_name = images['high_resolution']['id']
                                     #print(img_name)
-                                    filepath = 'downloads/'+ str(USER_ID) +'/' + img_name +'.jpeg'
+                                    filepath = vinted_product_path + img_name +'.jpeg'
                                     if not os.path.isfile(filepath):
                                         #print(full_size_url)
                                         req = requests.get(full_size_url)
@@ -336,11 +346,13 @@ def download_depop_data(userids):
                 print("Got all products. Start Downloading...")
                 break
         print(len(slugs))
-        path = "downloads/" + str(userid) + '/'
+        
+        depop_user_path = "downloads/" + str(userid) + '/'
+        
         try:
-            os.mkdir(path)
+            os.mkdir(depop_user_path)
         except OSError:
-            print("Creation of the directory %s failed or the folder already exists " % path)
+            print("Creation of the directory %s failed or the folder already exists " % depop_user_path)
         for slug in slugs:
             url = f"https://webapi.depop.com/api/v2/product/{slug}"
             #print(url)
@@ -365,6 +377,7 @@ def download_depop_data(userids):
             description = product_data['description']
             Sold = product_data['status']
             title = slug.replace("-"," ")
+            product_title = title.split(userid + " ", 1)[1]
 
             Colors = []
             # Get colors if available
@@ -387,14 +400,22 @@ def download_depop_data(userids):
             except KeyError:
                 pass
 
-
-
             for images in product_data['pictures']:
+                
+                depop_product_path = depop_user_path + str(product_title) + ' (' + str(product_id) + ')/'
+
+                try:
+                    os.mkdir(depop_product_path)
+                except OSError:
+                    print ("Creation of the directory %s failed or the folder already exists " % depop_product_path)
+                else:
+                    print ("Successfully created the directory %s " % depop_product_path)
+                
                 for i in images:
                     full_size_url = i['url']
                     img_name = i['id']
                 print(img_name)
-                filepath = 'downloads/' + str(userid) + '/' + str(img_name) + '.jpg'
+                filepath = depop_product_path + str(img_name) + '.jpg'
                 if not os.path.isfile(filepath):
                     print(full_size_url)
                     req = requests.get(full_size_url)
