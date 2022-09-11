@@ -399,17 +399,38 @@ def download_depop_data(userids):
                     sizes.append(size['name'])
             except KeyError:
                 pass
+            
+            depop_product_path = depop_user_path + str(product_title) + ' (' + str(product_id) + ')/'
+            try:
+                os.mkdir(depop_product_path)
+            except OSError:
+                print ("Creation of the directory %s failed or the folder already exists " % depop_product_path)
+            else:
+                print ("Successfully created the directory %s " % depop_product_path)
+
+
+            depop_product_file_path = depop_product_path + 'product_info.txt'
+            with open(depop_product_file_path, 'w') as product_file:
+                product_info = {
+                    "id": product_id,
+                    "title": product_title,
+                    "description": description,
+                    "size": sizes,
+                    "price": Price,
+                    "status": product_data["status"],
+                    "condition": product_data["condition"]["name"],
+                    "product_gender": product_data["gender"],
+                    "brand": Brand,
+                    "brand_name": product_data["brandName"],
+                    "product_group": product_data["group"],
+                    "product_type": product_data["productType"],
+                    "updated": product_data["dateUpdated"]
+                    }
+                    
+                for key, value in product_info.items(): 
+                    product_file.write('%s: %s\n' % (key, value))
 
             for images in product_data['pictures']:
-                
-                depop_product_path = depop_user_path + str(product_title) + ' (' + str(product_id) + ')/'
-
-                try:
-                    os.mkdir(depop_product_path)
-                except OSError:
-                    print ("Creation of the directory %s failed or the folder already exists " % depop_product_path)
-                else:
-                    print ("Successfully created the directory %s " % depop_product_path)
                 
                 for i in images:
                     full_size_url = i['url']
