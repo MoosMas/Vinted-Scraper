@@ -241,6 +241,25 @@ def download_vinted_data(userids, s):
                             else:
                                 print ("Successfully created the directory %s " % vinted_product_path)
                             
+                            
+                            vinted_product_file_path = vinted_product_path + 'product_info.txt'
+                            with open(vinted_product_file_path, 'w', encoding="UTF-8") as product_file:
+                                product_info = {
+                                    "id": ID,
+                                    "title": title,
+                                    "description": description,
+                                    "size": size,
+                                    "price": Price + product["currency"],
+                                    "status": State,
+                                    "brand": Brand,
+                                    "created": product["created_at_ts"],
+                                    "created_at": product["created_at"],
+                                    "updated": product["updated_at_ts"],
+                                    "user_updated": product["user_updated_at_ts"]
+                                    }
+                                    
+                                for key, value in product_info.items(): 
+                                    product_file.write('%s: %s\n' % (key, value))
 
                             #print(img)
                             if Images:
