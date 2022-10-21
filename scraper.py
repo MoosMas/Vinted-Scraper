@@ -215,6 +215,7 @@ def download_vinted_data(userids, s):
                         print ("Creation of the directory %s failed or the folder already exists " % vinted_user_path)
                     else:
                         print ("Successfully created the directory %s " % vinted_user_path)
+                    
                     for product in jsonresponse['items']:
                             img = product['photos']
                             ID = product['id']
@@ -229,6 +230,8 @@ def download_vinted_data(userids, s):
                             Price = product['price_numeric']
                             Images = product['photos']
                             title = product['title']
+                            
+                            title = title.replace("/","-")
                             
                             vinted_product_path = vinted_user_path + str(title) + " (" + str(ID) + ')/'
                             try:
