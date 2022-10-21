@@ -226,7 +226,7 @@ def download_vinted_data(userids, s):
                             State = product['status']
                             Brand = product['brand']
                             Colors = product['color1']
-                            Price = product['price']
+                            Price = product['price_numeric']
                             Images = product['photos']
                             title = product['title']
                             
