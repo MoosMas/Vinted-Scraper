@@ -155,6 +155,8 @@ def download_vinted_data(userids, s):
             verification_google = data['verification']['google']['valid']
             verification_phone = data['verification']['phone']['valid']
             
+            USER_ID = USER_ID.strip('\n')
+
             vinted_user_path = 'downloads/' + str(username) + ' (' + str(USER_ID) +') /'
             
             if data['photo']:
@@ -196,7 +198,6 @@ def download_vinted_data(userids, s):
                     params)
                 conn.commit()
 
-            USER_ID = USER_ID.strip('\n')
             url = f'https://www.vinted.nl/api/v2/users/{USER_ID}/items?page=1&per_page=200000'
             print('ID=' + str(USER_ID))
 
