@@ -250,7 +250,7 @@ def download_vinted_data(userids, s):
                                 product_info = {
                                     "id": ID,
                                     "title": title,
-                                    "description": description,
+                                    "description": description + '\n-----------',
                                     "size": size,
                                     "price": Price + product["currency"],
                                     "status": State,
