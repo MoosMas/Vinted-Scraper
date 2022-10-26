@@ -6,6 +6,7 @@ import sqlite3
 import argparse
 import time
 import cfscrape
+import re
 
 # ArgParse
 parser = argparse.ArgumentParser(description='Vinted & Depop Scraper/Downloader. Default downloads Vinted')
@@ -232,9 +233,10 @@ def download_vinted_data(userids, s):
                             Images = product['photos']
                             title = product['title']
                             
-                            title = title.replace("/","-")
                             
-                            vinted_product_path = vinted_user_path + str(title) + " (" + str(ID) + ')/'
+                            filename = re.sub(r'[\\/*?:"<>|]',"-", title)
+                            
+                            vinted_product_path = vinted_user_path + str(filename) + " (" + str(ID) + ')/'
                             try:
                                 os.mkdir(vinted_product_path)
                             except OSError:
