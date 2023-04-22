@@ -425,6 +425,12 @@ def download_depop_data(userids):
             except KeyError:
                 pass
             
+            # Get condition if available
+            try:
+                Condition = product_data['condition']['name']
+            except:
+                Condition = None
+            
             depop_product_path = depop_user_path + str(product_title) + ' (' + str(product_id) + ')/'
             try:
                 os.mkdir(depop_product_path)
@@ -443,7 +449,7 @@ def download_depop_data(userids):
                     "size": sizes,
                     "price": Price,
                     "status": product_data["status"],
-                    "condition": product_data["condition"]["name"],
+                    "condition": Condition,
                     "product_gender": product_data["gender"],
                     "brand": Brand,
                     "product_group": product_data["group"],
