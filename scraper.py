@@ -435,11 +435,11 @@ def download_depop_data(userids):
 
 
             depop_product_file_path = depop_product_path + 'product_info.txt'
-            with open(depop_product_file_path, 'w') as product_file:
+            with open(depop_product_file_path, 'w', encoding="UTF-8") as product_file:
                 product_info = {
                     "id": product_id,
                     "title": product_title,
-                    "description": description,
+                    "description": description + '\n-----------',
                     "size": sizes,
                     "price": Price,
                     "status": product_data["status"],
