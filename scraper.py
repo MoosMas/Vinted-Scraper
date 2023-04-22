@@ -146,7 +146,7 @@ def download_vinted_data(userids, s):
             positive_feedback_count = data['positive_feedback_count']
             negative_feedback_count = data['negative_feedback_count']
             feedback_reputation = data['feedback_reputation']
-            created_at = data['created_at']
+            # created_at = data['created_at']
             last_loged_on_ts = data['last_loged_on_ts']
             city_id = data['city_id']
             city = data['city']
@@ -178,11 +178,11 @@ def download_vinted_data(userids, s):
                     print('File already exists, skipped.')
                 params = (
                     username, USER_ID, gender, given_item_count, taken_item_count, followers_count, following_count,
-                    positive_feedback_count, negative_feedback_count, feedback_reputation, filepath, created_at,
+                    positive_feedback_count, negative_feedback_count, feedback_reputation, filepath,
                     last_loged_on_ts, city_id, city, country_title, verification_email, verification_google,
                     verification_facebook, verification_phone)
                 c.execute(
-                    "INSERT INTO Users(Username, User_id, Gender, Given_item_count, Taken_item_count, Followers_count, Following_count, Positive_feedback_count, Negative_feedback_count, Feedback_reputation, Avatar, Created_at, Last_loged_on_ts, City_id, City, Country_title, Verification_email, Verification_facebook, Verification_google, Verification_phone)VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                    "INSERT INTO Users(Username, User_id, Gender, Given_item_count, Taken_item_count, Followers_count, Following_count, Positive_feedback_count, Negative_feedback_count, Feedback_reputation, Avatar, Last_loged_on_ts, City_id, City, Country_title, Verification_email, Verification_facebook, Verification_google, Verification_phone)VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
                     params)
                 conn.commit()
 
@@ -191,11 +191,11 @@ def download_vinted_data(userids, s):
                 Avatar = ""
                 params = (
                     username, USER_ID, gender, given_item_count, taken_item_count, followers_count, following_count,
-                    positive_feedback_count, negative_feedback_count, feedback_reputation, Avatar, created_at,
+                    positive_feedback_count, negative_feedback_count, feedback_reputation, Avatar,
                     last_loged_on_ts, city_id, city, country_title, verification_email, verification_google, verification_facebook,
                     verification_phone)
                 c.execute(
-                    "INSERT INTO Users(Username, User_id, Gender, Given_item_count, Taken_item_count, Followers_count, Following_count, Positive_feedback_count, Negative_feedback_count, Feedback_reputation, Avatar, Created_at, Last_loged_on_ts, City_id, City, Country_title, Verification_email, Verification_facebook, Verification_google, Verification_phone)VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                    "INSERT INTO Users(Username, User_id, Gender, Given_item_count, Taken_item_count, Followers_count, Following_count, Positive_feedback_count, Negative_feedback_count, Feedback_reputation, Avatar, Last_loged_on_ts, City_id, City, Country_title, Verification_email, Verification_facebook, Verification_google, Verification_phone)VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
                     params)
                 conn.commit()
 
