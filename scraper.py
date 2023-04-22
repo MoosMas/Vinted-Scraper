@@ -414,7 +414,7 @@ def download_depop_data(userids):
 
             # Get brand if available
             try:
-                Brand = product_data['brand']
+                Brand = product_data['brandName']
             except:
                 Brand = None
             sizes = []
@@ -446,7 +446,6 @@ def download_depop_data(userids):
                     "condition": product_data["condition"]["name"],
                     "product_gender": product_data["gender"],
                     "brand": Brand,
-                    "brand_name": product_data["brandName"],
                     "product_group": product_data["group"],
                     "product_type": product_data["productType"],
                     "updated": product_data["dateUpdated"]
