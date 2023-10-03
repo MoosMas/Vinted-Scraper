@@ -6,6 +6,7 @@ import sqlite3
 import argparse
 import time
 import cfscrape
+import re
 
 # ArgParse
 parser = argparse.ArgumentParser(description='Vinted & Depop Scraper/Downloader. Default downloads Vinted')
@@ -145,7 +146,7 @@ def download_vinted_data(userids, s):
             positive_feedback_count = data['positive_feedback_count']
             negative_feedback_count = data['negative_feedback_count']
             feedback_reputation = data['feedback_reputation']
-            created_at = data['created_at']
+            # created_at = data['created_at']
             last_loged_on_ts = data['last_loged_on_ts']
             city_id = data['city_id']
             city = data['city']
@@ -155,6 +156,8 @@ def download_vinted_data(userids, s):
             verification_google = data['verification']['google']['valid']
             verification_phone = data['verification']['phone']['valid']
             
+            USER_ID = USER_ID.strip('\n')
+
             vinted_user_path = 'downloads/' + str(username) + ' (' + str(USER_ID) +') /'
             
             if data['photo']:
@@ -175,11 +178,11 @@ def download_vinted_data(userids, s):
                     print('File already exists, skipped.')
                 params = (
                     username, USER_ID, gender, given_item_count, taken_item_count, followers_count, following_count,
-                    positive_feedback_count, negative_feedback_count, feedback_reputation, filepath, created_at,
+                    positive_feedback_count, negative_feedback_count, feedback_reputation, filepath,
                     last_loged_on_ts, city_id, city, country_title, verification_email, verification_google,
                     verification_facebook, verification_phone)
                 c.execute(
-                    "INSERT INTO Users(Username, User_id, Gender, Given_item_count, Taken_item_count, Followers_count, Following_count, Positive_feedback_count, Negative_feedback_count, Feedback_reputation, Avatar, Created_at, Last_loged_on_ts, City_id, City, Country_title, Verification_email, Verification_facebook, Verification_google, Verification_phone)VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                    "INSERT INTO Users(Username, User_id, Gender, Given_item_count, Taken_item_count, Followers_count, Following_count, Positive_feedback_count, Negative_feedback_count, Feedback_reputation, Avatar, Last_loged_on_ts, City_id, City, Country_title, Verification_email, Verification_facebook, Verification_google, Verification_phone)VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
                     params)
                 conn.commit()
 
@@ -188,15 +191,14 @@ def download_vinted_data(userids, s):
                 Avatar = ""
                 params = (
                     username, USER_ID, gender, given_item_count, taken_item_count, followers_count, following_count,
-                    positive_feedback_count, negative_feedback_count, feedback_reputation, Avatar, created_at,
+                    positive_feedback_count, negative_feedback_count, feedback_reputation, Avatar,
                     last_loged_on_ts, city_id, city, country_title, verification_email, verification_google, verification_facebook,
                     verification_phone)
                 c.execute(
-                    "INSERT INTO Users(Username, User_id, Gender, Given_item_count, Taken_item_count, Followers_count, Following_count, Positive_feedback_count, Negative_feedback_count, Feedback_reputation, Avatar, Created_at, Last_loged_on_ts, City_id, City, Country_title, Verification_email, Verification_facebook, Verification_google, Verification_phone)VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                    "INSERT INTO Users(Username, User_id, Gender, Given_item_count, Taken_item_count, Followers_count, Following_count, Positive_feedback_count, Negative_feedback_count, Feedback_reputation, Avatar, Last_loged_on_ts, City_id, City, Country_title, Verification_email, Verification_facebook, Verification_google, Verification_phone)VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
                     params)
                 conn.commit()
 
-            USER_ID = USER_ID.strip('\n')
             url = f'https://www.vinted.nl/api/v2/users/{USER_ID}/items?page=1&per_page=200000'
             print('ID=' + str(USER_ID))
 
@@ -215,6 +217,7 @@ def download_vinted_data(userids, s):
                         print ("Creation of the directory %s failed or the folder already exists " % vinted_user_path)
                     else:
                         print ("Successfully created the directory %s " % vinted_user_path)
+                    
                     for product in jsonresponse['items']:
                             img = product['photos']
                             ID = product['id']
@@ -226,11 +229,14 @@ def download_vinted_data(userids, s):
                             State = product['status']
                             Brand = product['brand']
                             Colors = product['color1']
-                            Price = product['price']
+                            Price = product['price_numeric']
                             Images = product['photos']
                             title = product['title']
                             
-                            vinted_product_path = vinted_user_path + str(title) + " (" + str(ID) + ')/'
+                            
+                            filename = re.sub(r'[\\/*?:"<>|]',"-", title)
+                            
+                            vinted_product_path = vinted_user_path + str(filename) + " (" + str(ID) + ')/'
                             try:
                                 os.mkdir(vinted_product_path)
                             except OSError:
@@ -238,6 +244,25 @@ def download_vinted_data(userids, s):
                             else:
                                 print ("Successfully created the directory %s " % vinted_product_path)
                             
+                            
+                            vinted_product_file_path = vinted_product_path + 'product_info.txt'
+                            with open(vinted_product_file_path, 'w', encoding="UTF-8") as product_file:
+                                product_info = {
+                                    "id": ID,
+                                    "title": title,
+                                    "description": description + '\n-----------',
+                                    "size": size,
+                                    "price": Price + product["currency"],
+                                    "status": State,
+                                    "brand": Brand,
+                                    "created": product["created_at_ts"],
+                                    "created_at": product["created_at"],
+                                    "updated": product["updated_at_ts"],
+                                    "user_updated": product["user_updated_at_ts"]
+                                    }
+                                    
+                                for key, value in product_info.items(): 
+                                    product_file.write('%s: %s\n' % (key, value))
 
                             #print(img)
                             if Images:
@@ -389,7 +414,7 @@ def download_depop_data(userids):
 
             # Get brand if available
             try:
-                Brand = product_data['brand']
+                Brand = product_data['brandName']
             except:
                 Brand = None
             sizes = []
@@ -399,17 +424,43 @@ def download_depop_data(userids):
                     sizes.append(size['name'])
             except KeyError:
                 pass
+            
+            # Get condition if available
+            try:
+                Condition = product_data['condition']['name']
+            except:
+                Condition = None
+            
+            depop_product_path = depop_user_path + str(product_title) + ' (' + str(product_id) + ')/'
+            try:
+                os.mkdir(depop_product_path)
+            except OSError:
+                print ("Creation of the directory %s failed or the folder already exists " % depop_product_path)
+            else:
+                print ("Successfully created the directory %s " % depop_product_path)
+
+
+            depop_product_file_path = depop_product_path + 'product_info.txt'
+            with open(depop_product_file_path, 'w', encoding="UTF-8") as product_file:
+                product_info = {
+                    "id": product_id,
+                    "title": product_title,
+                    "description": description + '\n-----------',
+                    "size": sizes,
+                    "price": Price,
+                    "status": product_data["status"],
+                    "condition": Condition,
+                    "product_gender": product_data["gender"],
+                    "brand": Brand,
+                    "product_group": product_data["group"],
+                    "product_type": product_data["productType"],
+                    "updated": product_data["dateUpdated"]
+                    }
+                    
+                for key, value in product_info.items(): 
+                    product_file.write('%s: %s\n' % (key, value))
 
             for images in product_data['pictures']:
-                
-                depop_product_path = depop_user_path + str(product_title) + ' (' + str(product_id) + ')/'
-
-                try:
-                    os.mkdir(depop_product_path)
-                except OSError:
-                    print ("Creation of the directory %s failed or the folder already exists " % depop_product_path)
-                else:
-                    print ("Successfully created the directory %s " % depop_product_path)
                 
                 for i in images:
                     full_size_url = i['url']
