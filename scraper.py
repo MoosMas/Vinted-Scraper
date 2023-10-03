@@ -165,7 +165,7 @@ def download_vinted_data(userids, s):
                 except OSError:
                     print ("Creation of the directory failed or the folder already exists ")
                 req = requests.get(photo)
-                filepath = f'downloads/Avatars/{photo_id}.jpeg'
+                filepath = f'downloads/Avatars/{username}_{photo_id}.jpeg'
                 if not os.path.isfile(filepath):
                     print(photo_id)
                     with open(filepath, 'wb') as f:
