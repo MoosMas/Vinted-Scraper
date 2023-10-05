@@ -409,7 +409,7 @@ def download_depop_data(userids):
             except OSError:
                 print("Creation of the directory failed or the folder already exists ")
             req = requests.get(photo)
-            filepath = f'downloads/Avatars/{id}.jpeg'
+            filepath = f'downloads/Avatars/{username}_{id}.jpeg'
             if not os.path.isfile(filepath):
                 with open(filepath, 'wb') as f:
                     f.write(req.content)
