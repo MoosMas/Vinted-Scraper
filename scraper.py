@@ -549,8 +549,8 @@ def download_depop_data(userids):
                     "condition": Condition,
                     "product_gender": product_data["gender"],
                     "brand": Brand,
-                    "product_group": product_data["group"],
-                    "product_type": product_data["productType"],
+                    "product_group": Category,
+                    "product_type": subcategory,
                     "updated": product_data["dateUpdated"]
                     }
                     
