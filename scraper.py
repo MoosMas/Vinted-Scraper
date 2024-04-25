@@ -59,8 +59,8 @@ def vinted_session():
         'TE': 'Trailers',
     }
     req = s.get("https://www.vinted.nl/")
-    csrfToken = req.text.split('<meta name="csrf-token" content="')[1].split('"')[0]
-    s.headers['X-CSRF-Token'] = csrfToken
+    # csrfToken = req.text.split('<meta name="csrf-token" content="')[1].split('"')[0]
+    # s.headers['X-CSRF-Token'] = csrfToken
     return s
 
 def download_priv_msg(session_id, user_id):
