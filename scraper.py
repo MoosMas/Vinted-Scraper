@@ -152,7 +152,10 @@ def download_vinted_data(userids, s):
             data = jsonresponse['user']
             #get data
             username = data['login']
-            gender = data['gender']
+            try:
+                gender = data['gender']
+            except KeyError:
+                gender = ""
             given_item_count = data['given_item_count']
             taken_item_count = data['taken_item_count']
             followers_count = data['followers_count']
@@ -245,7 +248,10 @@ def download_vinted_data(userids, s):
                             ID = product['id']
                             User_id = product['user_id']
                             description = product['description']
-                            Gender = product['user']['gender']
+                            try:
+                                Gender = product['user']['gender']
+                            except KeyError:
+                                Gender = ""
                             Category = product['catalog_id']
                             size = product['size']
                             State = product['status']
