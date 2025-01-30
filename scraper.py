@@ -59,7 +59,7 @@ c.execute('''CREATE TABLE IF NOT EXISTS Depop_Data
              (ID, User_id, Url, Sold, Gender, Category, subcategory, size, State, Brand, Colors, Price, Image, Description, Title, Platform, Address, discountedPriceAmount, dateUpdated)''')
 
 c.execute('''CREATE TABLE IF NOT EXISTS Users
-             (Username, User_id, Gender, Given_item_count, Taken_item_count, Followers_count, Following_count, Positive_feedback_count, Negative_feedback_count, Feedback_reputation, Avatar, Created_at, Last_loged_on_ts, City_id, City, Country_title, Verification_email, Verification_facebook, Verification_google, Verification_phone, Platform)''')
+             (Username, User_id, Bio, Gender, Given_item_count, Taken_item_count, Followers_count, Following_count, Positive_feedback_count, Negative_feedback_count, Feedback_reputation, Avatar, Created_at, Last_loged_on_ts, City_id, City, Country_title, Verification_email, Verification_facebook, Verification_google, Verification_phone, Platform)''')
 
 c.execute('''CREATE TABLE IF NOT EXISTS Depop_Users
              (Username, User_id UNIQUE, bio, first_name, followers, following, initials, items_sold, last_name, last_seen, Avatar, reviews_rating, reviews_total, verified, website)''')
@@ -81,6 +81,10 @@ def update_col():
             c.execute('''ALTER TABLE Data ADD Favourite;''')
         except:
             logging.info("Column Favourite already exists")
+        try:
+            c.execute('''ALTER TABLE Users ADD Bio;''') 
+        except:
+            logging.info("Column Bio already exists")
         conn.commit()
         logging.info("Columns updated")
     except Exception as e:
@@ -221,6 +225,10 @@ def download_vinted_data(userids, s):
             #get data
             username = data['login']
             try:
+                bio = data['about']
+            except:
+                bio = None
+            try:
                 gender = data['gender']
             except:
                 gender = None
@@ -276,20 +284,32 @@ def download_vinted_data(userids, s):
 
             # Save user data to database
             params = (
-                username, USER_ID, gender, given_item_count, taken_item_count, followers_count, following_count,
+                username, USER_ID, bio, gender, given_item_count, taken_item_count, followers_count, following_count,
                 positive_feedback_count, negative_feedback_count, feedback_reputation, avatar_path, created_at,
                 last_loged_on_ts, city_id, city, country_title, verification_email, verification_google,
                 verification_facebook, verification_phone
             )
             
-            c.execute(
-                "INSERT INTO Users(Username, User_id, Gender, Given_item_count, Taken_item_count, Followers_count, "
-                "Following_count, Positive_feedback_count, Negative_feedback_count, Feedback_reputation, Avatar, "
-                "Created_at, Last_loged_on_ts, City_id, City, Country_title, Verification_email, Verification_facebook, "
-                "Verification_google, Verification_phone) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
-                params
-            )
-            conn.commit()
+            try:
+                c.execute(
+                    "INSERT INTO Users(Username, User_id, bio, Gender, Given_item_count, Taken_item_count, Followers_count, "
+                    "Following_count, Positive_feedback_count, Negative_feedback_count, Feedback_reputation, Avatar, "
+                    "Created_at, Last_loged_on_ts, City_id, City, Country_title, Verification_email, Verification_facebook, "
+                    "Verification_google, Verification_phone) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                    params
+                )
+            except Exception as e:
+                logging.error(f"Can't execute query : {e}")
+                update_col()
+            finally:
+                c.execute(
+                    "INSERT INTO Users(Username, User_id, bio, Gender, Given_item_count, Taken_item_count, Followers_count, "
+                    "Following_count, Positive_feedback_count, Negative_feedback_count, Feedback_reputation, Avatar, "
+                    "Created_at, Last_loged_on_ts, City_id, City, Country_title, Verification_email, Verification_facebook, "
+                    "Verification_google, Verification_phone) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                    params
+                )
+                conn.commit()
 
             url = f'https://www.vinted.nl/api/v2/users/{USER_ID}/items?page=1&per_page=200000'
             logging.info('ID=' + str(USER_ID))
