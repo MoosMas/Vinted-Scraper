@@ -1,2 +1,5 @@
 downloads/
+.vs/
 data.sqlite
+users.txt
+command.txt
