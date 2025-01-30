@@ -73,8 +73,14 @@ conn.commit()
 def update_col():
     logging.info("Trying to update columns of Data Table with new version of the script : add Url and Favourite field")
     try:
-        c.execute('''ALTER TABLE Data ADD Url;''')
-        c.execute('''ALTER TABLE Data ADD Favourite;''')
+        try:
+            c.execute('''ALTER TABLE Data ADD Url;''')
+        except:
+            logging.info("Column Url already exists")
+        try:
+            c.execute('''ALTER TABLE Data ADD Favourite;''')
+        except:
+            logging.info("Column Favourite already exists")
         conn.commit()
         logging.info("Columns updated")
     except Exception as e:
