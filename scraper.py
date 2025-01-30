@@ -155,7 +155,7 @@ def download_vinted_data(userids, s):
             try:
                 gender = data['gender']
             except KeyError:
-                gender = ""
+                gender = None
             given_item_count = data['given_item_count']
             taken_item_count = data['taken_item_count']
             followers_count = data['followers_count']
@@ -174,8 +174,10 @@ def download_vinted_data(userids, s):
             verification_email = data['verification']['email']['valid']
             verification_facebook = data['verification']['facebook']['valid']
             verification_google = data['verification']['google']['valid']
-            verification_phone = data['verification']['phone']['valid']
-            
+            try:
+                verification_phone = data['verification']['phone']['valid']
+            except:
+                verification_phone = None
             USER_ID = USER_ID.strip('\n')
 
             vinted_user_path = 'downloads/' + str(username) + ' (' + str(USER_ID) +') /'
@@ -251,7 +253,7 @@ def download_vinted_data(userids, s):
                             try:
                                 Gender = product['user']['gender']
                             except KeyError:
-                                Gender = ""
+                                Gender = None
                             Category = product['catalog_id']
                             size = product['size']
                             State = product['status']
